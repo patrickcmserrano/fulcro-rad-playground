@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "description": "= Fulcro Rapid Application Development Tools",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "shadow:watch": "shadow-cljs watch main",
+    "shadow:release": "shadow-cljs release main",
+    "postcss:build": "cross-env postcss src/css/tailwind.css -o ./resources/public/css/main.css --verbose",
+    "postcss:watch": "cross-env postcss src/css/tailwind.css -o ./resources/public/css/main.css --verbose -w",
+    "postcss:release": "cross-env NODE_ENV=production postcss src/css/tailwind.css -o ./resources/public/css/main.css --verbose",
+    "dev": "run-p -l *:watch",
+    "release": "run-s *:release"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fulcrologic/fulcro-rad.git"
@@ -15,16 +23,29 @@
   },
   "homepage": "https://github.com/fulcrologic/fulcro-rad#readme",
   "dependencies": {
+    "@headlessui/react": "^2.0.4",
+    "@headlessui/tailwindcss": "^0.2.0",
     "@js-joda/core": "^4.2.1",
     "@js-joda/timezone": "^2.8.0",
+    "@remixicon/react": "^4.2.0",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tremor/react": "^3.17.2",
+    "autoprefixer": "^10.4.19",
     "big.js": "5.2.2",
+    "cross-env": "^7.0.3",
+    "cssnano": "^7.0.1",
     "intl-messageformat": "^9.3.11",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "semantic-ui-react": "2.1.4",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5",
     "victory": "^34.3.6"
   },
   "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.38",
+    "postcss-cli": "^11.0.0",
     "shadow-cljs": "2.20.16"
   }
 }

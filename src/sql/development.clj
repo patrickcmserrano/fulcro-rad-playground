@@ -164,5 +164,5 @@
 
   (rad.sql/column-names account/attributes [::account/id ::account/active?])
 
-  (contains? #{::account/name} (::attr/qualified-key account/name))
-  )
+  (contains? #{::account/name} (::attr/qualified-key account/name)))
+

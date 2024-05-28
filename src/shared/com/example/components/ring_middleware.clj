@@ -23,6 +23,7 @@
 
       [:link {:href "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css"
               :rel  "stylesheet"}]
+      [:link {:rel "stylesheet" :href "/css/main.css"}]
       [:link {:rel "shortcut icon" :href "data:image/x-icon;," :type "image/x-icon"}]
       [:script (str "var fulcro_network_csrf_token = '" csrf-token "';")]]
      [:body
@@ -48,6 +49,7 @@
     (if (or (str/starts-with? uri "/api")
           (str/starts-with? uri "/images") ; perm store. For preview of uploads after file save
           (str/starts-with? uri "/files")
+          (str/starts-with? uri "/css")
           (str/starts-with? uri "/preview") ; temporary store. For preview of uploads before file save
           (str/starts-with? uri "/js"))
       (ring-handler req)
