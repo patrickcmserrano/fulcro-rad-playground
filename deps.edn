@@ -1,6 +1,8 @@
 {:paths   ["src/shared"]
 
- :deps    {com.fulcrologic/fulcro                 {:mvn/version "3.7.0-RC5"}
+ :deps    {metasoarous/oz                         {:mvn/version "2.0.0-alpha5"}
+
+           com.fulcrologic/fulcro                 {:mvn/version "3.7.0-RC5"}
            com.fulcrologic/fulcro-rad             {:mvn/version "1.6.0-RC5"}
            com.fulcrologic/fulcro-rad-semantic-ui {:mvn/version "1.4.0-RC5"}
            com.fulcrologic/fulcro-i18n            {:mvn/version "1.1.0"}

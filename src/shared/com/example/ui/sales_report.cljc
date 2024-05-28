@@ -2,6 +2,7 @@
   (:require
     #?(:cljs ["victory" :as victory])
     #?(:cljs ["@tremor/react" :as tremor])
+    [oz.core :as oz]
     [com.example.model.sales :as sales]
     [com.example.model.invoice :as invoice]
     [com.fulcrologic.fulcro.components :as comp]
@@ -30,6 +31,27 @@
 
 (def ui-tremor-progress-bar #?(:cljs (interop/react-factory tremor/ProgressBar)
                                :clj  (constantly "")))
+
+#_(def ui-oz-vega #?(:cljs (interop/react-factory oz.core/vega)
+                     :clj  (constantly "")))
+
+(def ui-oz-vega-lite #?(:cljs (interop/react-factory oz.core/vega-lite)
+                        :clj  (constantly "")))
+
+(defn play-data [& names]
+  (for [n names
+        i (range 20)]
+    {:time i :item n :quantity (+ (Math/pow (* i (count n)) 0.8) (rand-int (count n)))}))
+(def stacked-bar
+  {:data     {:values (play-data "munchkin" "witch" "dog" "lion" "tiger" "bear")}
+   :mark     "bar"
+   :encoding {:x     {:field "time"
+                      :type  "ordinal"}
+              :y     {:aggregate "sum"
+                      :field     "quantity"
+                      :type      "quantitative"}
+              :color {:field "item"
+                      :type  "nominal"}}})
 
 (def datachart
   #_[{:Number "2488", :name "Amphibians"}
@@ -148,23 +170,26 @@
                       ro/rotate?             (fn [rpt] (boolean (control/current-value rpt ::rotate?)))
                       ro/route               "invoice-report"}
                      ;; Use the report data to render a couple of victory charts with the table and controls
+
                      (let [{:keys [group-by]} parameters
                            bar-width (case group-by
                                        :day 5
                                        :month 10
                                        20)]
-                       (dom/div
-                         #_(ui-tremor-progress-bar {:value 32})
-                         (ui-tremor-barchart {
-                                              :categories    ["Number"],
-                                              :colors        ["blue"],
-                                              :data          datachart,
-                                              :index         "name",
-                                              :onValueChange (fn [v] (.log js/console v)),
-                                              #_#_:valueFormatter dataFormatter,})
-                         #_(ui-victory-chart {:domainPadding {:x 50}}
-                                             (ui-victory-bar {:data     current-rows
-                                                              :labels   (fn [v] (comp/isoget-in v ["datum" "items-sold"]))
-                                                              :barWidth bar-width
-                                                              :x        "date-groups"
-                                                              :y        "items-sold"})))))
+                       [:div
+                        #_(ui-tremor-progress-bar {:value 32})
+                        [oz.core/vega stacked-bar]
+                        [oz.core/vega-lite stacked-bar]
+                        (ui-tremor-barchart {
+                                             :categories    ["Number"],
+                                             :colors        ["blue"],
+                                             :data          datachart,
+                                             :index         "name",
+                                             :onValueChange (fn [v] (.log js/console v)),
+                                             #_#_:valueFormatter dataFormatter,})
+                        (ui-victory-chart {:domainPadding {:x 50}}
+                                          (ui-victory-bar {:data     current-rows
+                                                           :labels   (fn [v] (comp/isoget-in v ["datum" "items-sold"]))
+                                                           :barWidth bar-width
+                                                           :x        "date-groups"
+                                                           :y        "items-sold"}))]))

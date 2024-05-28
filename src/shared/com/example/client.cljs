@@ -1,6 +1,8 @@
 (ns com.example.client
   (:require
     [com.example.ui :as ui :refer [Root]]
+    [reagent.core]
+    [reagent.dom]
     [com.example.ui.login-dialog :refer [LoginForm]]
     [com.fulcrologic.fulcro.algorithms.timbre-support :refer [console-appender prefix-output-fn]]
     [com.fulcrologic.fulcro.algorithms.tx-processing.synchronous-tx-processing :as sync]
@@ -22,25 +24,27 @@
     [taoensso.tufte :as tufte :refer [profile]]))
 
 (defonce stats-accumulator
-  (tufte/add-accumulating-handler! {:ns-pattern "*"}))
+         (tufte/add-accumulating-handler! {:ns-pattern "*"}))
 
 (m/defmutation fix-route
   "Mutation. Called after auth startup. Looks at the session. If the user is not logged in, it triggers authentication"
   [_]
   (action [{:keys [app]}]
-    (let [logged-in (auth/verified-authorities app)]
-      (if (empty? logged-in)
-        (routing/route-to! app ui/LandingPage {})
-        (hist5/restore-route! app ui/LandingPage {})))))
+          (let [logged-in (auth/verified-authorities app)]
+            (if (empty? logged-in)
+              (routing/route-to! app ui/LandingPage {})
+              (hist5/restore-route! app ui/LandingPage {})))))
 
 (defn setup-RAD [app]
   (rad-app/install-ui-controls! app sui/all-controls)
   (report/install-formatter! app :boolean :affirmation (fn [_ value] (if value "yes" "no"))))
 
-(defonce app (-> (rad-app/fulcro-rad-app {})
-               (with-react18)
-               (btxn/with-batched-reads)
-               #_(sync/with-synchronous-transactions #{:remote})))
+(defonce app (-> (rad-app/fulcro-rad-app
+                   {:render-middleware (fn [_ render] (reagent.core/as-element (render)))
+                    :render-root!      reagent.dom/render})
+                 (with-react18)
+                 (btxn/with-batched-reads)
+                 #_(sync/with-synchronous-transactions #{:remote})))
 
 (defn refresh []
   ;; hot code reload of installed controls
